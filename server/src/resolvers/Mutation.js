@@ -38,14 +38,25 @@ function post(root, args, context) {
   });
 }
 
-function updateLink(root, args, context) {
+async function updateLink(root, args, context) {
+  const userId = getUserId(context);
+  const postedBy = await context.prisma.link({ id: args.id }).postedBy();
+  if (userId !== postedBy.id) { throw new Error('User not authorized to update post') }
+
   return context.prisma.updateLink({
-    data: { url: args.url, description: args.description },
+    data: { 
+      url: args.url,
+      description: args.description,
+    },
     where: { id: args.id },
   })
 }
 
-function deleteLink(root, args, context) {
+async function deleteLink(root, args, context) {
+  const userId = getUserId(context);
+  const postedBy = await context.prisma.link({ id: args.id }).postedBy();
+  if (userId !== postedBy.id) { throw new Error('User not authorized to delete post') }
+
   return context.prisma.deleteLink({ id: args.id })
 }
 
