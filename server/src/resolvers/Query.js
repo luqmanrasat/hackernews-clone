@@ -1,8 +1,14 @@
-const info = () => `This is the API of a Hackernews Clone`;
+function info() {
+  return `This is the API of a Hackernews Clone`
+}
 
-const feed = (root, args, context) => context.prisma.links();
+function feed(root, args, context){
+  return context.prisma.links()
+}
 
-const link = (root, args, context) => context.prisma.link({ id: args.id });
+function link(root, args, context){
+  return context.prisma.link({ id: args.id })
+}
 
 module.exports = {
   info,
