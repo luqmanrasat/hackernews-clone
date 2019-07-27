@@ -1,5 +1,5 @@
-function links(root, args, context) {
-  return context.prisma.user({ id: root.id }).links()
+function links(root, args, { prisma }) {
+  return prisma.user({ id: root.id }).links()
 }
 
 module.exports = {

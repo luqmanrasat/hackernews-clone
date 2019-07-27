@@ -2,12 +2,12 @@ function info() {
   return `This is the API of a Hackernews Clone`
 }
 
-function feed(root, args, context){
-  return context.prisma.links()
+function feed(root, args, { prisma }){
+  return prisma.links()
 }
 
-function link(root, args, context){
-  return context.prisma.link({ id: args.id })
+function link(root, args, { prisma }){
+  return prisma.link({ id: args.id })
 }
 
 module.exports = {
