@@ -2,12 +2,26 @@ function info() {
   return `This is the API of a Hackernews Clone`
 }
 
-function feed(root, args, { prisma }){
-  return prisma.links()
+async function feed(root, { filter, skip, first, orderBy }, { prisma }){
+  const where = filter ? {
+    OR: [
+      { description_contains: filter },
+      { url_contains: filter },
+    ],
+  } : {};
+  const links = await prisma.links({
+    where,
+    skip,
+    first,
+    orderBy,
+  });
+  const count = await prisma.linksConnection({ where }).aggregate().count();
+
+  return { links, count };
 }
 
-function link(root, args, { prisma }){
-  return prisma.link({ id: args.id })
+function link(root, { id }, { prisma }){
+  return prisma.link({ id })
 }
 
 module.exports = {

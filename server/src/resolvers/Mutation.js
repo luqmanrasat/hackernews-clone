@@ -2,81 +2,72 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { APP_SECRET, getUserId } = require('../utils');
 
-async function signup(root, args, { prisma }) {
-  const password = await bcrypt.hash(args.password, 10);
-  const user = await prisma.createUser({ ...args, password });
+async function signup(root, { email, password, name }, { prisma }) {
+  password = await bcrypt.hash(password, 10);
+  const user = await prisma.createUser({ email, password, name });
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
-  return {
-    token,
-    user,
-  };
+  return { token, user };
 }
 
-async function login(root, args, { prisma }) {
-  const user = await prisma.user({ email: args.email });
+async function login(root, { email, password }, { prisma }) {
+  const user = await prisma.user({ email });
   if (!user) { throw new Error('No such user found') }
 
-  const valid = await bcrypt.compare(args.password, user.password);
+  const valid = await bcrypt.compare(password, user.password);
   if (!valid) { throw new Error('Invalid password') }
 
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
-  return {
-    token,
-    user,
-  };
+  return { token, user };
 }
 
-function post(root, args, { request, prisma }) {
+function post(root, { url, description }, { request, prisma }) {
   const userId = getUserId(request);
 
   return prisma.createLink({
-    url: args.url,
-    description: args.description,
+    url,
+    description,
     postedBy: { connect: { id: userId } },
   });
 }
 
-async function updateLink(root, args, { request, prisma }) {
+async function updateLink(root, { id, url, description }, { request, prisma }) {
   const userId = getUserId(request);
   const linkExist = await prisma.$exists.link({
-    id: args.id,
+    id,
     postedBy: { id: userId },
   });
   if (!linkExist) { throw new Error('User not authorized to update post') }
 
   return prisma.updateLink({
-    data: { 
-      url: args.url,
-      description: args.description,
-    },
-    where: { id: args.id },
-  })
+    data: { url, description },
+    where: { id },
+  });
 }
 
-async function deleteLink(root, args, { request, prisma }) {
+async function deleteLink(root, { id }, { request, prisma }) {
   const userId = getUserId(request);
   const linkExist = await prisma.$exists.link({
-    id: args.id,
+    id,
     postedBy: { id: userId },
   });
   if (!linkExist) { throw new Error('User not authorized to delete post') }
 
-  return prisma.deleteLink({ id: args.id })
+  return prisma.deleteLink({ id });
 }
 
-async function vote(root, args, { request, prisma }) {
+async function vote(root, { linkId }, { request, prisma }) {
   const userId = getUserId(request);
   const voteExist = await prisma.$exists.vote({
     user: { id: userId },
-    link: { id: args.linkId },
+    link: { id: linkId },
   });
-  if (voteExist) { throw new Error(`Already voted for link: ${args.linkId}`) }
+  if (voteExist) { throw new Error(`Already voted for link: ${linkId}`) }
 
   return prisma.createVote({
     user: { connect: { id: userId } },
-    link: { connect: { id: args.linkId } },
+    link: { connect: { id: linkId } },
   });
 }
 

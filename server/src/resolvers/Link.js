@@ -1,9 +1,9 @@
-function postedBy(root, args, { prisma }) {
-  return prisma.link({ id: root.id }).postedBy()
+function postedBy({ id }, args, { prisma }) {
+  return prisma.link({ id }).postedBy()
 }
 
-function votes(root, args, { prisma }) {
-  return prisma.link({ id: root.id }).votes()
+function votes({ id }, args, { prisma }) {
+  return prisma.link({ id }).votes()
 }
 
 module.exports = {
