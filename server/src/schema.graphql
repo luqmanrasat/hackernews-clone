@@ -32,6 +32,7 @@ type User{
 
 type Link {
   id: ID!
+  createdAt: DateTime!
   url: String!
   description: String!
   postedBy: User
@@ -48,6 +49,8 @@ type Feed {
   links: [Link!]!
   count: Int!
 }
+
+scalar DateTime
 
 enum LinkOrderByInput {
   description_ASC
