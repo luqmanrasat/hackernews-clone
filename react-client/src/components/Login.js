@@ -32,49 +32,49 @@ class Login extends Component {
 
     return (
       <div>
-        <h4 className="mv3">{ login ? 'Login' : 'Sign Up' }</h4>
+        <h4 className="mv3">{login ? 'Login' : 'Sign Up'}</h4>
         <div className="flex flex-column">
-          { !login && (
+          {!login && (
             <input
-              value={ name }
-              onChange={ e => this.setState({ name: e.target.value }) }
+              value={name}
+              onChange={e => this.setState({ name: e.target.value })}
               type="text"
               placeholder="Your name"
             />
           )}
           <input
-            value={ email }
-            onChange={ e => this.setState({ email: e.target.value }) }
+            value={email}
+            onChange={e => this.setState({ email: e.target.value })}
             type="text"
             placeholder="Your email address"
           />
           <input
-            value={ password }
-            onChange={ e => this.setState({ password: e.target.value }) }
+            value={password}
+            onChange={e => this.setState({ password: e.target.value })}
             type="password"
             placeholder="Choose a safe password"
           />
         </div>
         <div className="flex mt3">
           <Mutation
-            mutation={ login ? LOGIN_MUTATION : SIGNUP_MUTATION }
+            mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
             variables={{ email, password, name }}
-            onCompleted={ data => this._confirm(data) }
+            onCompleted={data => this._confirm(data)}
           >
-            { mutation => (
+            {mutation => (
               <div
                 className="pointer mr2 button"
-                onClick={ mutation }
+                onClick={mutation}
               >
-                { login ? 'login' : 'create account' }
+                {login ? 'login' : 'create account'}
               </div>
             )}
           </Mutation>
           <div
             className="pointer button"
-            onClick={ () => this.setState({ login: !login }) }
+            onClick={() => this.setState({ login: !login })}
           >
-            { login ? 'need to create an account?' : 'already have an account?' }
+            {login ? 'need to create an account?' : 'already have an account?'}
           </div>
         </div>
       </div>
